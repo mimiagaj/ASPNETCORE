@@ -20,9 +20,57 @@ namespace AspnetCoreModule.TestSites.Standard
 {
     public class Startup
     {
+        public static class Commands
+        {
+            public static string command_websocket = "websocket";
+            public static string command_websocketSubProtocol = "websocketSubProtocol";
+            public static string command_GetProcessId = "GetProcessId";
+            public static string command_EchoPostData = "EchoPostData";
+            public static string command_contentlength = "contentlength";
+            public static string command_connectionclose = "connectionclose";
+            public static string command_notchunked = "notchunked";
+            public static string command_chunked = "chunked";
+            public static string command_manuallychunked = "manuallychunked";
+            public static string command_manuallychunkedandclose = "manuallychunkedandclose";
+            public static string command_ImpersonateMiddleware = "ImpersonateMiddleware";
+            public static string command_DoSleep = "DoSleep";
+            public static string command_MemoryLeak = "MemoryLeak";
+            public static string command_ExpandEnvironmentVariables = "ExpandEnvironmentVariables";
+            public static string command_GetEnvironmentVariables = "GetEnvironmentVariables";
+            public static string command_DumpEnvironmentVariables = "DumpEnvironmentVariables";
+            public static string command_GetRequestHeaderValue = "GetRequestHeaderValue";
+            public static string command_DumpRequestHeaders = "DumpRequestHeaders";
+            public static string command_ANCMTestEnvStartUpDelay = "ANCMTestEnvStartUpDelay";
+            public static string command_ANCMTestEnvShutdownDelay = "ANCMTestEnvShutdownDelay";
+
+            public static string[] commands = new string[] {
+                command_websocket,
+                command_websocketSubProtocol,
+                command_GetProcessId,
+                command_EchoPostData,
+                command_contentlength,
+                command_connectionclose,
+                command_notchunked,
+                command_chunked,
+                command_manuallychunked,
+                command_manuallychunkedandclose,
+                command_ImpersonateMiddleware,
+                command_DoSleep,
+                command_MemoryLeak,
+                command_ExpandEnvironmentVariables,
+                command_GetEnvironmentVariables,
+                command_DumpEnvironmentVariables,
+                command_GetRequestHeaderValue,
+                command_DumpRequestHeaders,
+                command_ANCMTestEnvStartUpDelay,
+                command_ANCMTestEnvShutdownDelay
+            };
+        }
+
         public static int SleeptimeWhileClosing = 0;
         public static int SleeptimeWhileStarting = 0;
         public static List<byte[]> MemoryLeakList = new List<byte[]>();
+        
 
         public void ConfigureServices(IServiceCollection services)
         {
@@ -44,12 +92,25 @@ namespace AspnetCoreModule.TestSites.Standard
             }
             await webSocket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, CancellationToken.None);
         }
-
+        
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddConsole(minLevel: LogLevel.Warning);
-            
-            app.Map("/websocketSubProtocol", subApp =>
+
+            app.Map("/help", subApp =>
+            {
+                subApp.Run(async context =>
+                {
+                    string helpContent = string.Empty;
+                    foreach (var item in Commands.commands)
+                    {
+                        helpContent += item + "<br>";
+                    }
+                    await context.Response.WriteAsync(helpContent);
+                });
+            });
+
+            app.Map("/" + Commands.command_websocketSubProtocol, subApp =>
             {
                 app.UseWebSockets(new WebSocketOptions
                 {
@@ -72,7 +133,7 @@ namespace AspnetCoreModule.TestSites.Standard
                 });
             });
 
-            app.Map("/websocket", subApp =>
+            app.Map("/" + Commands.command_websocket, subApp =>
             {
                 app.UseWebSockets(new WebSocketOptions
                 {
@@ -95,7 +156,7 @@ namespace AspnetCoreModule.TestSites.Standard
                 });
             });
 
-            app.Map("/GetProcessId", subApp =>
+            app.Map("/" + Commands.command_GetProcessId, subApp =>
             {
                 subApp.Run(context =>
                 {
@@ -104,7 +165,7 @@ namespace AspnetCoreModule.TestSites.Standard
                 });
             });
             
-            app.Map("/EchoPostData", subApp =>
+            app.Map("/" + Commands.command_EchoPostData, subApp =>
             {
                 subApp.Run(context =>
                 {
@@ -138,7 +199,7 @@ namespace AspnetCoreModule.TestSites.Standard
                 });
             });
 
-            app.Map("/contentlength", subApp =>
+            app.Map("/" + Commands.command_contentlength, subApp =>
             {
                 subApp.Run(context =>
                 {
@@ -147,7 +208,7 @@ namespace AspnetCoreModule.TestSites.Standard
                 });
             });
 
-            app.Map("/connectionclose", subApp =>
+            app.Map("/" + Commands.command_connectionclose, subApp =>
             {
                 subApp.Run(async context =>
                 {
@@ -157,7 +218,7 @@ namespace AspnetCoreModule.TestSites.Standard
                 });
             });
 
-            app.Map("/notchunked", subApp =>
+            app.Map("/" + Commands.command_notchunked, subApp =>
             {
                 subApp.Run(async context =>
                 {
@@ -169,7 +230,7 @@ namespace AspnetCoreModule.TestSites.Standard
                 });
             });
 
-            app.Map("/chunked", subApp =>
+            app.Map("/" + Commands.command_chunked, subApp =>
             {
                 subApp.Run(async context =>
                 {
@@ -178,7 +239,7 @@ namespace AspnetCoreModule.TestSites.Standard
                 });
             });
                         
-            app.Map("/manuallychunked", subApp =>
+            app.Map("/" + Commands.command_manuallychunked, subApp =>
             {
                 subApp.Run(context =>
                 {
@@ -187,7 +248,7 @@ namespace AspnetCoreModule.TestSites.Standard
                 });
             });
 
-            app.Map("/manuallychunkedandclose", subApp =>
+            app.Map("/" + Commands.command_manuallychunkedandclose, subApp =>
             {
                 subApp.Run(context =>
                 {
@@ -197,7 +258,7 @@ namespace AspnetCoreModule.TestSites.Standard
                 });
             });
 
-            app.Map("/ImpersonateMiddleware", subApp =>
+            app.Map("/" + Commands.command_ImpersonateMiddleware, subApp =>
             {
                 subApp.UseMiddleware<ImpersonateMiddleware>();                
                 subApp.Run(context =>
@@ -215,7 +276,7 @@ namespace AspnetCoreModule.TestSites.Standard
                     string action = string.Empty;
                     string parameter = string.Empty;
 
-                    action = "DoSleep";
+                    action = Commands.command_DoSleep;
                     if (item.StartsWith(action))
                     {
                         /* 
@@ -231,7 +292,7 @@ namespace AspnetCoreModule.TestSites.Standard
                         Thread.Sleep(sleepTime);
                     }
 
-                    action = "MemoryLeak";
+                    action = Commands.command_MemoryLeak;
                     if (item.StartsWith(action))
                     {
                         parameter = "1024";
@@ -247,7 +308,7 @@ namespace AspnetCoreModule.TestSites.Standard
                         response = "MemoryLeak, size:" + size.ToString() + " KB, total: " + MemoryLeakList.Count.ToString();
                     }
                     
-                    action = "ExpandEnvironmentVariables";
+                    action = Commands.command_ExpandEnvironmentVariables;
                     if (item.StartsWith(action))
                     {
                         if (item.Length > action.Length)
@@ -257,14 +318,14 @@ namespace AspnetCoreModule.TestSites.Standard
                         }                        
                     }
 
-                    action = "GetEnvironmentVariables";
+                    action = Commands.command_GetEnvironmentVariables;
                     if (item.StartsWith(action))
                     {
                         parameter = item.Substring(action.Length);
                         response = Environment.GetEnvironmentVariables().Count.ToString();
                     }
 
-                    action = "DumpEnvironmentVariables";
+                    action = Commands.command_DumpEnvironmentVariables;
                     if (item.StartsWith(action))
                     {
                         response = String.Empty;
@@ -275,7 +336,7 @@ namespace AspnetCoreModule.TestSites.Standard
                         }                        
                     }
 
-                    action = "GetRequestHeaderValue";
+                    action = Commands.command_GetRequestHeaderValue;
                     if (item.StartsWith(action))
                     {
                         if (item.Length > action.Length)
@@ -293,7 +354,7 @@ namespace AspnetCoreModule.TestSites.Standard
                         }
                     }
 
-                    action = "DumpRequestHeaders";
+                    action = Commands.command_DumpRequestHeaders;
                     if (item.StartsWith(action))
                     {
                         response = String.Empty;

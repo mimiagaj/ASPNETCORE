@@ -96,7 +96,7 @@ namespace AspnetCoreModule.TestSites.Standard
                     .UseStartup<Startup>();
             }
 
-            string startupDelay = Environment.GetEnvironmentVariable("ANCMTestStartUpDelay");
+            string startupDelay = Environment.GetEnvironmentVariable(Startup.Commands.command_ANCMTestEnvStartUpDelay);
             if (!string.IsNullOrEmpty(startupDelay))
             {
                 Startup.SleeptimeWhileStarting = Convert.ToInt32(startupDelay);
@@ -107,7 +107,7 @@ namespace AspnetCoreModule.TestSites.Standard
                 Thread.Sleep(Startup.SleeptimeWhileStarting);
             }
 
-            string shutdownDelay = Environment.GetEnvironmentVariable("ANCMTestShutdownDelay");
+            string shutdownDelay = Environment.GetEnvironmentVariable(Startup.Commands.command_ANCMTestEnvShutdownDelay);
             if (!string.IsNullOrEmpty(shutdownDelay))
             {
                 Startup.SleeptimeWhileClosing = Convert.ToInt32(shutdownDelay);

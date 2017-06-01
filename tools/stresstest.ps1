@@ -64,14 +64,14 @@ if (Test-Path (Join-Path $aspNetCoreModuleTest aspnetcoremodule.test.dll))
         if ($_ % 2 -eq 0)
         {
             ("Recycling backend only")
-            stop-process -name dotnet 
+            stop-process -name dotnet -Confirm:$false -Force
             (1..50) | foreach { del ("C:\inetpub\wwwroot\AspnetCoreHandler_HelloWeb\foo" + $_  + "\app_offline.htm") -confirm:$false -Force 2> out-null } 
-            stop-process -name dotnet 
+            stop-process -name dotnet -Confirm:$false -Force
         }
         else
         {
             ("Recycling backedn + enabling appoffline ....")          
-            stop-process -name dotnet
+            stop-process -name dotnet -Confirm:$false -Force
             (1..50) | foreach { copy C:\gitroot\AspNetCoreModule\test\StressTestWebRoot\app_offline.htm ("C:\inetpub\wwwroot\AspnetCoreHandler_HelloWeb\foo" + $_ ) } 
         }
         Sleep 1
